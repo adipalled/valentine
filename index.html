@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Valentine 💗</title>
+
+  <style>
+    :root{
+      --pink1:#ffd1dc;
+      --pink2:#ff8fb1;
+      --pink3:#ff5c8a;
+      --shadow: 0 22px 60px rgba(0,0,0,0.18);
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background:
+        radial-gradient(circle at 20% 15%, #ffe6ef 0%, transparent 45%),
+        radial-gradient(circle at 80% 20%, #ffd1f0 0%, transparent 45%),
+        radial-gradient(circle at 50% 90%, #ffc2d6 0%, transparent 55%),
+        linear-gradient(135deg, var(--pink1), var(--pink2));
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+      animation: pinkPulse 4.2s ease-in-out infinite;
+    }
+
+    /* boost pulse during YES moment */
+    body.party{
+      animation: partyPulse 1.4s ease-in-out infinite;
+    }
+    @keyframes pinkPulse{
+      0%,100% { filter: saturate(1) brightness(1); }
+      50%     { filter: saturate(1.25) brightness(1.08); }
+    }
+    @keyframes partyPulse{
+      0%,100% { filter: saturate(1.3) brightness(1.06); }
+      50%     { filter: saturate(1.65) brightness(1.14); }
+    }
+
+    .card{
+      width:min(680px, 92vw);
+      background: rgba(255,255,255,0.86);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.6);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 28px 20px;
+      text-align:center;
+      position:relative;
+      transform: translateZ(0);
+    }
+
+    h1{
+      margin: 0 0 10px;
+      font-size: 30px;
+      letter-spacing: -0.3px;
+    }
+
+    p{
+      margin: 10px 0;
+      font-size: 17px;
+      line-height: 1.25;
+    }
+
+    .cat{
+      width: 190px;
+      margin: 14px auto 6px;
+      display:block;
+      filter: drop-shadow(0 12px 24px rgba(0,0,0,0.25));
+      animation: catWobble 1.6s ease-in-out infinite;
+      transform-origin: 50% 70%;
+    }
+    .cat.panic{ animation: catPanic 0.35s linear infinite; }
+
+    @keyframes catWobble{
+      0%,100% { transform: rotate(-1deg) translateX(-1px); }
+      50%     { transform: rotate( 1deg) translateX( 1px); }
+    }
+    @keyframes catPanic{
+      0%   { transform: translate(0,0) rotate(0deg); }
+      25%  { transform: translate(2px,-1px) rotate(-2deg); }
+      50%  { transform: translate(-2px,1px) rotate(2deg); }
+      75%  { transform: translate(2px,1px) rotate(-2deg); }
+      100% { transform: translate(0,0) rotate(0deg); }
+    }
+
+    .playground{
+      position:relative;
+      height: 220px;
+      margin-top: 18px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.45);
+      border: 1px dashed rgba(255, 0, 90, 0.28);
+      overflow:hidden;
+    }
+
+    button{
+      padding: 14px 20px;
+      border-radius: 999px;
+      border: none;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 12px 22px rgba(0,0,0,0.18);
+      transition: transform .18s ease, filter .12s ease, box-shadow .18s ease;
+      touch-action: manipulation;
+      user-select:none;
+      transform-origin: center;
+    }
+    button:active{ transform: scale(0.98); }
+
+    #yes{
+      background: var(--pink3);
+      color: #fff;
+      position:absolute;
+      left: 30%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    #yes:hover{ filter: brightness(1.06); }
+
+    /* YES button “power up” glow during party */
+    body.party #yes{
+      box-shadow: 0 18px 34px rgba(255, 92, 138, 0.35);
+      filter: brightness(1.05);
+    }
+
+    #no{
+      position:absolute;
+      left: 70%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: #7b7b7b;
+      color:#fff;
+      white-space: nowrap;
+    }
+
+    .angryShake{ animation: angryBtn 0.18s linear 6; }
+    @keyframes angryBtn{
+      0%{ transform: translate(0,0); }
+      25%{ transform: translate(2px,0); }
+      50%{ transform: translate(-2px,0); }
+      75%{ transform: translate(2px,0); }
+      100%{ transform: translate(0,0); }
+    }
+
+    .hint{
+      margin-top: 12px;
+      font-size: 13px;
+      opacity: .75;
+    }
+
+    /* Modal */
+    .modal{
+      position:fixed;
+      inset:0;
+      display:none;
+      place-items:center;
+      background: rgba(0,0,0,0.55);
+      padding: 16px;
+    }
+
+    .modal.show{ display:grid; }
+
+    .modalContent{
+      width:min(520px, 92vw);
+      background:#fff;
+      border-radius: 22px;
+      padding: 24px 18px 18px;
+      text-align:center;
+      box-shadow: 0 24px 70px rgba(0,0,0,0.28);
+      transform: translateY(10px) scale(0.96);
+      opacity: 0;
+      animation: popIn 520ms cubic-bezier(.2, 1.2, .2, 1) forwards;
+      position:relative;
+      overflow:hidden;
+    }
+
+    @keyframes popIn{
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .modalTitle{
+      font-size: 44px;
+      margin: 6px 0 10px;
+      letter-spacing: 1px;
+    }
+
+    .modalText{
+      font-size: 18px;
+      margin: 8px 0;
+    }
+
+    .peonyWrap{
+      margin: 14px auto 10px;
+      width: min(360px, 78vw);
+      border-radius: 18px;
+      overflow:hidden;
+      box-shadow: 0 18px 44px rgba(0,0,0,0.18);
+      transform: translateY(10px) scale(0.96);
+      opacity: 0;
+      animation: peonyIn 700ms ease forwards;
+      animation-delay: 160ms;
+    }
+
+    @keyframes peonyIn{
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .peony{
+      display:block;
+      width:100%;
+      height:auto;
+    }
+
+    /* Floating hearts */
+    .heart{
+      position: fixed;
+      left: 0;
+      top: 0;
+      pointer-events: none;
+      font-size: 18px;
+      will-change: transform, opacity;
+      animation: floatUp 1200ms ease-out forwards;
+      filter: drop-shadow(0 8px 12px rgba(0,0,0,0.15));
+    }
+
+    @keyframes floatUp{
+      0%   { transform: translate(var(--x), var(--y)) scale(0.9); opacity: 0; }
+      10%  { opacity: 1; }
+      100% { transform: translate(calc(var(--x) + var(--dx)), calc(var(--y) - 220px)) rotate(var(--rot)) scale(1.25); opacity: 0; }
+    }
+
+    /* Optional tiny music button */
+    .musicBtn{
+      position: fixed;
+      right: 14px;
+      bottom: 14px;
+      border-radius: 999px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.75);
+      border: 1px solid rgba(255,255,255,0.7);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+      font-weight: 700;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <h1>hey casey</h1>
+
+    <p>this took a bit to make so</p>
+    <p><strong>please please please please please say yes</strong></p>
+
+    <img src="sad-cat.png" alt="sad cat" class="cat" id="cat" />
+
+    <p><strong>will you be my valentine casey</strong></p>
+
+    <div class="playground" id="playground">
+      <button id="yes">Yes 💖</button>
+      <button id="no">No</button>
+    </div>
+
+    <div class="hint">the “no” button is about to lose it</div>
+  </div>
+
+  <!-- If you add song.mp3 to the same folder, this will play it on YES -->
+  <audio id="bgm" preload="auto" loop>
+    <source src="song.mp3" type="audio/mpeg" />
+  </audio>
+
+  <button class="musicBtn" id="musicBtn" aria-label="toggle music">🔊</button>
+
+  <div class="modal" id="modal">
+    <div class="modalContent">
+      <div class="modalTitle">YAYYYYYYYYY</div>
+
+      <div class="modalText">happy valentines baby i love you 💗</div>
+
+      <div class="peonyWrap">
+        <img src="peony.png" alt="flowers" class="peony" />
+      </div>
+
+      <button id="close">close ✨</button>
+
+      <!-- OPTIONAL: Spotify embed (legal + easy)
+           Replace the src with the track embed URL you get from Spotify → Share → Embed track -->
+      <!--
+      <div style="margin-top:14px;">
+        <iframe style="border-radius:12px" src="SPOTIFY_EMBED_URL_HERE"
+          width="100%" height="152" frameborder="0" allowfullscreen=""
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+      </div>
+      -->
+    </div>
+  </div>
+
+  <script>
+    const noBtn = document.getElementById("no");
+    const yesBtn = document.getElementById("yes");
+    const playground = document.getElementById("playground");
+    const modal = document.getElementById("modal");
+    const closeBtn = document.getElementById("close");
+    const cat = document.getElementById("cat");
+    const bgm = document.getElementById("bgm");
+    const musicBtn = document.getElementById("musicBtn");
+
+    const angerLevels = [
+      { text: "No",      bg: "#7b7b7b" },
+      { text: "NO.",     bg: "#6a6a6a" },
+      { text: "NO 😐",   bg: "#5f5f5f" },
+      { text: "NO 😒",   bg: "#c26a00" },
+      { text: "NO 😠",   bg: "#e04a2a" },
+      { text: "NO 😡",   bg: "#ff2b2b" },
+      { text: "STOP 😡", bg: "#c40000" }
+    ];
+
+    let anger = 0;
+
+    let yesScale = 1;
+    const YES_GROWTH_PER_DODGE = 0.085;
+    const YES_MAX_SCALE = 2.05;
+
+    const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+
+    function toLocalCoords(clientX, clientY){
+      const r = playground.getBoundingClientRect();
+      return {
+        x: clamp(clientX - r.left, 0, r.width),
+        y: clamp(clientY - r.top, 0, r.height)
+      };
+    }
+
+    function moveNo(avoidX=null, avoidY=null){
+      const area = playground.getBoundingClientRect();
+      const btn = noBtn.getBoundingClientRect();
+
+      const pad = 10;
+      const maxX = area.width - btn.width - pad;
+      const maxY = area.height - btn.height - pad;
+
+      let nx, ny;
+      for (let i=0; i<25; i++){
+        nx = pad + Math.random() * Math.max(1, maxX);
+        ny = pad + Math.random() * Math.max(1, maxY);
+
+        if (avoidX == null || avoidY == null) break;
+
+        const dx = (nx + btn.width/2) - avoidX;
+        const dy = (ny + btn.height/2) - avoidY;
+        if (Math.hypot(dx, dy) > 140) break;
+      }
+
+      noBtn.style.left = nx + "px";
+      noBtn.style.top  = ny + "px";
+      noBtn.style.transform = "none";
+    }
+
+    function levelUpAnger(){
+      anger = Math.min(anger + 1, angerLevels.length - 1);
+      const lvl = angerLevels[anger];
+
+      noBtn.textContent = lvl.text;
+      noBtn.style.background = lvl.bg;
+
+      noBtn.classList.remove("angryShake");
+      void noBtn.offsetWidth;
+      noBtn.classList.add("angryShake");
+
+      cat.classList.add("panic");
+      setTimeout(() => cat.classList.remove("panic"), 650);
+    }
+
+    function growYes(){
+      yesScale = Math.min(YES_MAX_SCALE, yesScale + YES_GROWTH_PER_DODGE);
+      yesBtn.style.transform = `translate(-50%, -50%) scale(${yesScale})`;
+    }
+
+    function dodge(e){
+      const { x, y } = toLocalCoords(e.clientX, e.clientY);
+      levelUpAnger();
+      growYes();
+      moveNo(x, y);
+    }
+
+    noBtn.addEventListener("mouseenter", dodge);
+    noBtn.addEventListener("pointerdown", dodge);
+    noBtn.addEventListener("click", dodge);
+
+    function spawnHearts(count = 28){
+      const rect = yesBtn.getBoundingClientRect();
+      const cx = rect.left + rect.width/2;
+      const cy = rect.top + rect.height/2;
+
+      for (let i=0; i<count; i++){
+        const h = document.createElement("div");
+        h.className = "heart";
+        h.textContent = Math.random() < 0.25 ? "💗" : (Math.random() < 0.5 ? "💖" : "💘");
+
+        const x = cx + (Math.random()*60 - 30);
+        const y = cy + (Math.random()*30 - 15);
+        const dx = (Math.random()*180 - 90) + "px";
+        const rot = (Math.random()*80 - 40) + "deg";
+
+        h.style.setProperty("--x", x + "px");
+        h.style.setProperty("--y", y + "px");
+        h.style.setProperty("--dx", dx);
+        h.style.setProperty("--rot", rot);
+
+        document.body.appendChild(h);
+        setTimeout(() => h.remove(), 1400);
+      }
+    }
+
+    async function tryPlayMusic(){
+      // Will only work after a user gesture (click)
+      if (!bgm) return;
+      try{
+        await bgm.play();
+        musicBtn.textContent = "🔊";
+      }catch{
+        // If no song.mp3 exists, or autoplay blocked, ignore quietly
+        musicBtn.textContent = "🔇";
+      }
+    }
+
+    yesBtn.addEventListener("click", async () => {
+      document.body.classList.add("party");
+      spawnHearts(34);
+
+      // make YES feel like a “moment”
+      yesBtn.style.transition = "transform 260ms cubic-bezier(.2,1.6,.2,1)";
+      yesBtn.style.transform = `translate(-50%, -50%) scale(${Math.min(2.25, yesScale + 0.35)})`;
+      setTimeout(() => {
+        yesBtn.style.transition = "";
+      }, 280);
+
+      await tryPlayMusic();
+
+      modal.classList.add("show");
+    });
+
+    closeBtn.addEventListener("click", () => {
+      modal.classList.remove("show");
+      document.body.classList.remove("party");
+    });
+
+    musicBtn.addEventListener("click", async () => {
+      if (!bgm) return;
+      if (bgm.paused){
+        await tryPlayMusic();
+      }else{
+        bgm.pause();
+        musicBtn.textContent = "🔇";
+      }
+    });
+
+    // init
+    noBtn.textContent = angerLevels[0].text;
+    noBtn.style.background = angerLevels[0].bg;
+    moveNo();
+
+    // fix YES button positioning scaling baseline
+    yesBtn.style.transform = `translate(-50%, -50%) scale(${yesScale})`;
+  </script>
+</body>
+</html>
